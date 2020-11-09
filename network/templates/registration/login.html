@@ -1,0 +1,107 @@
+{% extends "network/layout.html" %}
+{% load widget_tweaks %}
+
+{% block body %}
+
+<h2>Login</h2>
+
+{% comment %} <form action="{% url 'login' %}" method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <input autofocus class="form-control" type="text" name="username" placeholder="Username">
+    </div>
+    <div class="form-group">
+        <input class="form-control" type="password" name="password" placeholder="Password">
+    </div>
+    <input class="btn btn-primary" type="submit" value="Login">
+</form> {% endcomment %}
+
+<div class="ui four column centered grid">
+    <div class="column">
+        <div class="ui fluid card">
+            <div class="content">
+                <form class="ui form" id="login" action="{% url 'login' %}" method="post" novalidate>
+                    <h4 class="ui header">Login</h4>
+                    {% csrf_token %}
+                    {% for hidden_field in form.hidden_fields %}
+                        {{ hidden_field }}
+                    {% endfor %}
+                    {% for field in form.visible_fields %}
+                        <div class="field {% if field.errors %} error {% endif %}">
+                            <div class="ui left icon input">
+                                {% render_field field placeholder=field.label %}
+                                {% if forloop.counter.first %} <i class="user icon"></i> 
+                                {% else %} <i class="lock icon"></i> 
+                                {% endif %}
+                            </div>
+                            {% if field.help_text %}
+                                <small>{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                    <button class="ui fluid linkedin button" id="submit" type="submit">Login</button>
+                    <div class="ui error message"></div>
+                </form>
+                <br>
+                <p>don't have an account? <a href="{% url 'register' %}">Register here.</a></p>
+            </div>
+        </div>
+        {% if form.errors %}
+            <div class="ui error message" id="error_messages">
+                {% for field in form.visible_fields %}
+                    {{field.errors}}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>  
+        {% endif %}
+    </div>
+</div>
+
+<script>
+$('#login')
+  .form({
+    fields: {
+      username     : 'empty',
+      password    : 'empty',
+    }
+  })
+;
+
+$("#submit" ).click(function() {
+  $("#error_messages").hide();
+});
+</script>
+
+{% comment %} <div class="ui four column centered grid">
+    <div class="column">
+        <div class="ui fluid card">
+            <div class="content">
+                <form class="ui form" action="{% url 'login' %}" method="post">
+                    {% csrf_token %}
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <input type="text" name="username" placeholder="Username">
+                            <i class="user icon"></i>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="ui left icon input">
+                            <input type="password" name="password" placeholder="Password">
+                            <i class="lock icon"></i>
+                        </div>
+                    </div>
+                    <button class="ui fluid linkedin button" type="submit">Login</button>
+                </form>
+                <br>
+                <p>Don't have an account? <a href="{% url 'register' %}">Register here.</a></p>
+            </div>
+        </div>
+        {% if message %}
+            <div class="ui error message">{{ message }}</div>
+        {% endif %}
+    </div>
+</div> {% endcomment %}
+{% endblock %}

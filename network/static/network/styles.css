@@ -1,0 +1,97 @@
+.register .header {
+  color: #147baf;
+}
+
+.register small {
+  color: grey;
+}
+
+.register small ul,
+.errorlist {
+  margin: 0 !important;
+  padding: 0 0.833em 0 !important;
+}
+
+.ui.error.message {
+  font-size: 0.85em !important;
+}
+
+.register .help ul li {
+  padding-bottom: 3px;
+}
+
+.ui[class*="four column"].grid > .column:not(.row),
+.ui[class*="four column"].grid > .row > .column {
+  width: 27%;
+  min-width: 420px !important;
+}
+
+.ui.form .field {
+  margin: 0 0 0.7em !important;
+}
+
+.ui.card > .follows {
+  background-color: aliceblue;
+  font-weight: 700;
+  color: #147baf;
+}
+
+.user_email {
+  color: cornflowerblue !important;
+}
+
+.ui.form .hidden {
+  display: none;
+}
+
+.right.menu {
+  align-items: center;
+}
+
+.ui.secondary.menu {
+  background-color: #f1f1f1;
+}
+
+.ui.secondary.pointing.menu .item {
+  align-self: baseline;
+}
+
+.ui.menu:not(.vertical) .item > .button {
+  padding: 7px 1.14285714em;
+}
+
+.ui.secondary.pointing.menu p {
+  color: darkcyan;
+  font-family: fantasy;
+  font-weight: 700;
+}
+
+.ui[class*="very padded"].segment {
+  padding: 1.5em;
+}
+
+.ui.feed > .event > .content .extra.text {
+  max-width: none;
+}
+
+.ui.feed:last-child {
+  margin-top: 0;
+}
+
+.dj-message {
+  padding-bottom: 0 !important;
+}
+
+.liked {
+  color: #ff2733;
+}
+
+.ui.teal.button {
+  top: 10px;
+  left: 630px;
+  position: absolute;
+}
+
+.summary .ui.form {
+  display: none;
+}

@@ -1,0 +1,141 @@
+{% extends "network/layout.html" %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block body %}
+<div class="ui raised very padded text container segment" id="main">
+    <div class="column">
+        <div class="ui feed">
+            <div class="content">
+                <form class="ui form" id="comment" action="{% url 'index' %}" method="post" novalidate>
+                    {% csrf_token %}
+                    {% for hidden_field in post_form.hidden_fields %}
+                        {{ hidden_field }}
+                    {% endfor %}
+                    {% for field in post_form.visible_fields %}
+                        <div class="field {% if field.errors %} error {% endif %}">
+                            <div class="ui left icon input">
+                                {% render_field field %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button class="ui fluid linkedin button" id="submit" type="submit">Post</button>
+                    <div class="ui error message"></div>
+                </form>
+            </div>
+        </div>
+        {% if post_form.errors %}
+            <div class="ui error message" id="error_messages">
+                {% for field in post_form.visible_fields %}
+                    {{field.errors}}
+                {% endfor %}
+                {% for error in post_form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>  
+        {% endif %}
+    </div>
+</div>
+
+<div class="ui contanier">
+    {% for post in page_obj %}
+    <div class="ui raised very padded text container segment">
+        {% if  post.author.user == request.user %}
+            <div class="ui animated teal mini button" tabindex="0" data-comment="{{post.pk}}">
+                <div class="hidden content" >Edit</div>
+                    <div class="visible content">
+                        <i class="pencil alternate icon"></i>
+                    </div>
+            </div>
+        {% endif %}
+        <div class="ui feed">
+            <div class="event">
+                <div class="label"><img src={{post.author.avatar.url}}/></div>
+                <div class="content">
+                    <div class="summary">
+                        {% if post.author.user == request.user %}
+                        <a href={% url 'profile' %}>{{post.author.user.first_name}} </a>
+                        {% else %}
+                        <a href={{post.author.get_absolute_url}}>{{post.author.user.first_name}} </a>
+                        {% endif %}
+                        {{post.author}}
+                        <div class="date">
+                        {{post.created|timesince}}
+                        </div>
+                        {% if  post.author.user == request.user %}
+                            <form class="ui form comment"  id="form_{{post.pk}}" data-form="{{post.pk}}">
+                                {% csrf_token %}
+                                <div class="field">
+                                    <div class="ui left icon input">
+                                        <textarea rows="2" id="text_{{post.pk}}"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        {% endif %}
+                    </div>
+                    <div class="extra text" id="msg_{{post.pk}}" data-msg="{{post.pk}}">
+                        {{post.message}}
+                    </div>
+                    <div class="meta">
+                        <form>
+                            {% csrf_token %}
+                            {{ request.user.username|json_script:"username" }}
+                            <a class="like" id="{{post.pk}}" data-post={{post.pk}}">
+                            <i class="like icon {% if request.user.profile in post.likes.all %}liked{% endif %}"></i>
+                                {{post.likes.count}} 
+                            </a>
+                            <span>Like{{post.likes.count|pluralize}}</span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="ui eight column centered grid">
+    <div class="column">
+        <div class="ui pagination menu">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="item"><i class="icon angle double left"></i></a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="item"><i class="icon angle left"></i></a>
+            {% endif %}
+                <a class="item">{{ page_obj.number }}</a>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="item"><i class="icon angle right"></i></a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="item"><i class="icon double angle right"></i></a>
+            {% endif %}
+        </div>
+    </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+$('#comment')
+  .form({
+    fields: {
+      message: {
+        identifier: 'message',
+        rules: [
+          {
+            type   : 'empty',
+            prompt : 'Write a comment before submitting'
+          }
+        ]
+      },
+    }
+  })
+;
+
+$("#submit" ).click(function() {
+  $("#error_messages").hide();
+});
+</script>
+
+<script src="{% static 'network/posts.js' %}"></script>
+
+{% endblock javascript %}

@@ -1,0 +1,81 @@
+{% extends 'network/layout.html' %}
+{% load static %}
+
+{% block body %}
+
+<div class="ui three column centered grid">
+  <div class="column">
+    <div class="ui fluid card">
+      <div class="content">
+        <button class="ui right floated button primary" id="update_profile">Update Profile</button>
+        <img class="left floated tiny circular ui image" src="{{request.user.profile.avatar.url}}">
+        <div class="header">
+            {{request.user.first_name}}
+        </div>
+        <div class="meta">
+          {{request.user.username}}
+        </div>
+        <div class="meta user_email">
+          {{request.user.email}}
+        </div>
+        <div class="description">
+          {{request.user.profile.bio}}
+        </div>
+        </div>
+        <div class="extra content">
+          <span class="left floated">
+            <i class="calendar alternate icon"></i> Joined: {{request.user.date_joined|date:"M, Y"}}
+          </span>
+          <span class="right floated">
+            <i class="map pin icon"></i> {{request.user.profile.location}}
+          </span>
+        </div>
+        <div class="extra content follows">
+          <span class="right floated">
+            {{request.user.following.count}} Followers
+          </span>
+          <span>
+            {{request.user.profile.following.count}} Following
+          </span>
+        </div>
+      </div>
+      
+      {% if user_form.errors %} 
+        <div class="ui error message" id="error_messages">
+          The form has errors. Please verify the information submitted
+        </div>  
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% for post in posts %}
+    <div class="ui raised very padded text container segment">
+    <div class="ui feed">
+      <div class="event">
+        <div class="label"><img src={{post.author.avatar.url}}/></div>
+        <div class="content">
+          <div class="summary">
+              <a href={{post.author.get_absolute_url}}>{{post.author.user.first_name}} </a>
+              {{post.author}}
+              <div class="date">
+              {{post.created|timesince}}
+              </div>
+          </div>
+          <div class="extra text">
+              {{post.message}}
+          </div>
+          <div class="meta">
+              <a class="like">
+              <i class="like icon"></i> {{post.likes.count}} Like{{post.likes.count|pluralize}}
+              </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+
+{% include 'network/modals/profile_form_modal.html' %}
+
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+<div class="ui contanier">
+{% if message %}
+    <p style="font-weight:700; color:red; padding:10px;">{{message}}</p>
+{% else %}
+    {% for post in page_obj %}
+    <div class="ui raised very padded text container segment">
+        <div class="ui feed">
+            <div class="event">
+                    <div class="label"><img src={{post.author.avatar.url}}/></div>
+                <div class="content">
+                    <div class="summary">
+                        <a href={{post.author.get_absolute_url}}>{{post.author.user.first_name}} </a>
+                        {{post.author}}
+                        <div class="date">
+                        {{post.created|timesince}}
+                        </div>
+                    </div>
+                    <div class="extra text">
+                        {{post.message}}
+                    </div>
+                    <div class="meta">
+                        <a class="like">
+                        <i class="like icon {% if request.user.profile in post.likes.all %}liked{% endif %}"></i>
+                            {{post.likes.count}} Like{{post.likes.count|pluralize}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="ui eight column centered grid">
+    <div class="column">
+        <div class="ui pagination menu">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" class="item"><i class="icon angle double left"></i></a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="item"><i class="icon angle left"></i></a>
+            {% endif %}
+                <a class="item">{{ page_obj.number }}</a>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="item"><i class="icon angle right"></i></a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="item"><i class="icon double angle right"></i></a>
+            {% endif %}
+        </div>
+    </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

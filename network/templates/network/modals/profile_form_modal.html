@@ -1,0 +1,115 @@
+{% load widget_tweaks %}
+
+<!-- modal to update the user profile-->
+<div class="ui modal profile">
+  <i class="close icon"></i>
+  <div class="header">Profile</div>
+  <div class="content">
+    <div class="ui centered grid">
+
+      <div class="three wide column">
+
+        <div class="ui small circular image">
+            <img src="{{request.user.profile.avatar.url}}">
+        </div>
+      </div>
+    
+      <!--FORM TO UPDATE PROFILE-->
+      <div class="thirteen wide column">
+        <form class="ui form profile" action="{% url 'profile' %}" method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+          <div class="two fields">
+
+            {% for field in user_form.visible_fields %}
+              <div class="field {% if field.errors %} error {% endif %}">
+                <div class="ui left icon input">
+                  {% render_field field placeholder=field.label %}
+                  {% if forloop.counter == 1 %} <i class="user icon"></i> 
+                  {% elif forloop.counter == 2 %} <i class="at icon"></i> 
+                  {% endif %}
+                </div>
+                {% if field.help_text %}
+                  <small>{{ field.help_text }}</small>
+                {% endif %}
+              </div>
+            {% endfor %}
+
+          </div>
+
+          <div class="two fields">
+
+            {% for field in profile_form.visible_fields %}
+              <div class="field{% if field.errors %} error{% endif %} {% if field.name == 'avatar' %}hidden{% endif %}">
+                <div class="ui left icon input">
+                  {% render_field field placeholder=field.label %}
+                  {% if forloop.counter.first %} <i class="user icon"></i> 
+                  {% elif forloop.counter == 3 %} <i class="map pin icon"></i> 
+                  {% endif %}
+                </div>
+                {% if field.help_text %}
+                  <small>{{ field.help_text }}</small>
+                {% endif %}
+              </div>
+            {% endfor %}
+        
+          </div>
+
+          <button class="ui fluid linkedin button" id="submit"  style="display:none" type="submit"></button>
+          <div class="ui error message"></div>
+
+        </form>
+        {% if user_form.errors %} 
+          <div class="ui error message server">
+              {% for field in user_form.visible_fields %}
+                  {{field.errors}}
+              {% endfor %}
+              {% for error in user_form.non_field_errors %}
+                  {{ error }}
+              {% endfor %}
+          </div>  
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="actions">
+    <div class="ui negative right labeled icon button">
+      Cancel
+      <i class="x icon"></i>
+    </div>
+    <div class="ui approve positive right labeled icon button">
+      Save
+      <i class="checkmark icon"></i>
+    </div>
+  </div>
+</div>
+
+{% block javascript %}
+<script>
+  $(document).ready(function(){
+    $('#update_profile').click(function(){
+      $('.ui.modal.profile')
+      .modal({
+        onDeny    : function(){
+          $('.ui.modal.profile').hide();
+        },
+        onApprove : function() {
+          $(".ui.error.message.server").hide();
+          $('#submit').click();
+          return false
+        }
+      })
+      .modal('show')
+    ;
+    });
+
+  $('.ui.form.profile')
+  .form({
+    fields: {
+      first_name     : 'empty',
+      email     : 'empty',
+      }
+    });
+
+  });
+</script>
+{% endblock javascript %}

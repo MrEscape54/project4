@@ -1,0 +1,89 @@
+{% extends "network/layout.html" %}
+{% load widget_tweaks %}
+
+{% block body %}
+
+{% comment %} 
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
+
+    <form action="{% url 'register' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <input class="form-control" autofocus type="text" name="username" placeholder="Username">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="email" name="email" placeholder="Email Address">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" name="password" placeholder="Password">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
+        </div>
+        <input class="btn btn-primary" type="submit" value="Register">
+    </form> 
+{% endcomment %}   
+
+<div class="ui four column centered grid register">
+    <div class="column">
+        <div class="ui fluid card">
+            <div class="content">
+                <form class="ui form" id="register" action="{% url 'register' %}" method="post" novalidate>
+                    <h4 class="ui header">Register</h4>
+                    {% csrf_token %}
+                    {% for hidden_field in form.hidden_fields %}
+                        {{ hidden_field }}
+                    {% endfor %}
+                    {% for field in form.visible_fields %}
+                        <div class="field {% if field.errors %} error {% endif %}">
+                            <div class="ui left icon input">
+                                {% render_field field placeholder=field.label %}
+                                {% if forloop.counter <= 2 %} <i class="user icon"></i> 
+                                {% elif forloop.counter == 3 %} <i class="at icon"></i> 
+                                {% else %} <i class="lock icon"></i> 
+                                {% endif %}
+                            </div>
+                            {% if field.help_text %}
+                                <small>{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button class="ui fluid linkedin button" id="submit" type="submit">Register</button>
+                    <div class="ui error message"></div>
+                </form>
+                <br>
+                <p>Already have an account? <a href="{% url 'login' %}">Login here.</a></p>
+            </div>
+        </div>
+        {% if form.errors %}
+            <div class="ui error message" id="error_messages">
+                {% for field in form.visible_fields %}
+                    {{field.errors}}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>  
+        {% endif %}
+    </div>
+</div>
+
+<script>
+$('#register')
+  .form({
+    fields: {
+      username     : 'empty',
+      first_name   : 'empty',
+      email        : 'empty',
+      password1    : 'minLength[8]',
+    }
+  })
+;
+$("#submit" ).click(function() {
+  $("#error_messages").hide();
+});
+</script>
+
+{% endblock %}
