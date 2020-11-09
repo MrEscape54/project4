@@ -48,7 +48,7 @@ def following(request):
     profile = Profile.objects.get(user=request.user)
     following = [user for user in profile.following.all()]
     posts = []
-    active = 'following'
+    active = 'following'  # CSS menu flag
     qs = None
     message = None
     for u in following:
@@ -194,6 +194,7 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
+@login_required
 def follow_unfollow(request):
 
     if request.method == 'POST':
